@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_restful import Api, Resource, reqparse
+from flask_restful import Api, Resource, reqparse, abort
 
 app = Flask(__name__)
 api = Api(app)
@@ -12,14 +12,28 @@ video_put_args.add_argument('likes', type=int, help= "Number of likes of the vid
 video_put_args.add_argument('views', type=int, help= "Number of views", required=True)
 
 
+def abort_if_not_exist(video_id):
+    if video_id not in videos:
+        abort(404, message="Could not find the video")
+
+
+def abort_if_exists(video_id):
+    if video_id in videos:
+        abort(409, message="Video with this ID already exists.")
+
+
 class Video(Resource):
     def get(self, video_id):
+        abort_if_not_exist(video_id)
         return videos[video_id]
 
     def put(self, video_id):
         args = video_put_args.parse_args()
         videos[video_id] = args
         return videos[video_id], 201
+
+    def delete(self, video_id):
+        pass
 
 
 api.add_resource(Video, '/video/<int:video_id>')
