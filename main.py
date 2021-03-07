@@ -1,8 +1,12 @@
 from flask import Flask, request
 from flask_restful import Api, Resource, reqparse, abort
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 api = Api(app)
+db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://malami:78z433XMn@localhost/restapi'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 videos = {'0101': {'data': 'exists'} }
 
